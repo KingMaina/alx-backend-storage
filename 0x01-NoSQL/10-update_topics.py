@@ -4,7 +4,7 @@
 from typing import List
 
 
-def update_topics(mongo_collection, name: str, topics: List[str]) -> None:
+def update_topics(mongo_collection, name: str, topics: List[str]):
     """Changes all topics of a school document
 
         Changes based on the name
@@ -22,5 +22,6 @@ def update_topics(mongo_collection, name: str, topics: List[str]) -> None:
         -------
         None
     """
-    mongo_collection.update_one({'name': name}, {'$set': {'topics': topics}})
-    return None
+    query = {'name': name}
+    operation = {'$set': {'topics': topics}}
+    mongo_collection.update_many(query, operation)
