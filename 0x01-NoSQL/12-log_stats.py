@@ -20,13 +20,13 @@ if __name__ == '__main__':
     # Print total number of request for each method
     print('Methods:')
     for method in METHODS:
-        num_method_logs = logs_nginx_collection.find(
-            {'method': {'$eq': method}}).count()
+        num_method_logs = logs_nginx_collection.count_documents(
+            {'method': {'$eq': method}})
         print('\tmethod {}: {}'.format(method, num_method_logs))
 
     # Count number of GET requests
-    num_get_requests = logs_nginx_collection.find(
-        {'method': 'GET', 'path': PATH}).count()
+    num_get_requests = logs_nginx_collection.count_documents(
+        {'method': 'GET', 'path': PATH})
     print('{} status check'.format(num_get_requests))
 
     # Close database connection

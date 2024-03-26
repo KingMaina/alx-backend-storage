@@ -20,13 +20,13 @@ if __name__ == '__main__':
     # Print total number of request for each method
     print('Methods:')
     for method in METHODS:
-        num_method_logs = logs_nginx_collection.find(
-            {'method': {'$eq': method}}).count()
+        num_method_logs = logs_nginx_collection.count_documents(
+            {'method': {'$eq': method}})
         print('\tmethod {}: {}'.format(method, num_method_logs))
 
     # Count number of GET requests
-    num_get_requests = logs_nginx_collection.find(
-        {'method': 'GET', 'path': PATH}).count()
+    num_get_requests = logs_nginx_collection.count_documents(
+        {'method': 'GET', 'path': PATH})
     print('{} status check'.format(num_get_requests))
 
     # Log IPs
@@ -34,10 +34,16 @@ if __name__ == '__main__':
        {
            '$group': {
                 '_id': '$ip',
-                'ipCount': {'$sum': '$ip'}
+                'ipCount': {'$sum': 1}
             }
         },
-       {'$sort': {'ipCount': -1}}
+       {'$sort': {'ipCount': -1}},
+       {'$limit': 10},
+       {'$project': {
+           '_id': 0,
+           "ip": '$_id',
+           "ipCount": 1
+       }}
     ])
     print('IPs:')
     for ip in top_10_present_ips:
